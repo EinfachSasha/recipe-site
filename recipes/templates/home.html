@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="text-center">
+        <img src="{% static 'images/logo.webp' %}" alt="Site Logo" class="img-fluid my-3" style="max-width: 300px;">
+        <h2 class="mb-4">Simple recipes made for real, actual, everyday life.</h2>
+    </div>
+
+    <!-- Main Recipe Categories -->
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="{% static 'images/quick_easy.jpg' %}" class="card-img-top" alt="Quick and Easy">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Quick and Easy</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="{% static 'images/healthy.jpg' %}" class="card-img-top" alt="Healthy">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Healthy</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="{% static 'images/5_ingredients.jpg' %}" class="card-img-top" alt="5 Ingredients">
+                <div class="card-body text-center">
+                    <h5 class="card-title">5 Ingredients</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="{% static 'images/pasta.jpg' %}" class="card-img-top" alt="Pasta">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Pasta</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub Categories -->
+    <div class="d-flex justify-content-center my-4">
+        <div class="row">
+            <div class="col-2">
+                <div class="text-center">
+                    <img src="{% static 'images/quick_easy_circle.jpg' %}" class="rounded-circle img-fluid" alt="Quick and Easy">
+                    <p>Quick and Easy</p>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="text-center">
+                    <img src="{% static 'images/dinner.jpg' %}" class="rounded-circle img-fluid" alt="Dinner">
+                    <p>Dinner</p>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="text-center">
+                    <img src="{% static 'images/vegetarian.jpg' %}" class="rounded-circle img-fluid" alt="Vegetarian">
+                    <p>Vegetarian</p>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="text-center">
+                    <img src="{% static 'images/healthy.jpg' %}" class="rounded-circle img-fluid" alt="Healthy">
+                    <p>Healthy</p>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="text-center">
+                    <img src="{% static 'images/instant_pot.jpg' %}" class="rounded-circle img-fluid" alt="Instant Pot">
+                    <p>Instant Pot</p>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="text-center">
+                    <img src="{% static 'images/vegan.jpg' %}" class="rounded-circle img-fluid" alt="Vegan">
+                    <p>Vegan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

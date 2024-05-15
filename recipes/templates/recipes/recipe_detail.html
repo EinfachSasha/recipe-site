@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}{{ recipe.title }}{% endblock %}
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h1 class="h4 m-0">{{ recipe.title }}</h1>
+        </div>
+        <div class="card-body">
+            <p>{{ recipe.description }}</p>
+            <p><strong>Автор:</strong> {{ recipe.author.username }}</p>
+            <p><strong>Дата публикации:</strong> {{ recipe.created_at }}</p>
+            <a href="{% url 'recipe_list' %}" class="btn btn-secondary">Назад к списку рецептов</a>
+            <form action="{% url 'like_recipe' recipe.id %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-like">
+                    <i class="far fa-thumbs-up"></i> ({{ recipe.total_likes }})
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header">
+            <h2 class="h5 m-0">Комментарии</h2>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for comment in comments %}
+            <li class="list-group-item">
+                <strong>{{ comment.author.username }}</strong> ({{ comment.created_at }}): {{ comment.text }}
+                <div class="small mt-1">
+                    <a href="{% url 'like_comment' comment.id %}" class="card-link text-success">
+                        <i class="fas fa-thumbs-up"></i> {{ comment.total_likes }}
+                    </a>
+                    <a href="{% url 'dislike_comment' comment.id %}" class="card-link text-danger">
+                        <i class="fas fa-thumbs-down"></i> {{ comment.total_dislikes }}
+                    </a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header">
+            <h3 class="h5 m-0">Добавить комментарий</h3>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit" class="btn btn-primary">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer text-center">
+        <p>© 2024 Все права защищены.</p>
+    </div>
+</div>
+{% endblock %}
