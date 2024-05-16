@@ -1,9 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Recipe, Comment
+from .models import Recipe, Comment, UserProfile
 from .forms import RecipeForm, RecipeSearchForm
 from .forms import CommentForm, RatingForm
 from .forms import SignUpForm
+from .forms import UserProfileForm
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
+from .models import UserProfile
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from .models import Recipe, Comment
+from .forms import CommentForm, RatingForm
 
 def home(request):
     return render(request, 'home.html')
@@ -29,7 +38,7 @@ def user_profile(request):
         'user_recipes': user_recipes,
         'liked_recipes': liked_recipes
     }
-    return render(request, 'recipes/user_profile.html', context)
+    return render(request, 'profiles/user_profile.html', context)
 
 
 def recipe_list(request):
@@ -43,32 +52,52 @@ def recipe_list(request):
         recipes = recipes.filter(cuisine__iexact=cuisine)
     return render(request, 'recipes/recipe_list.html', {'recipes': recipes})
 
+@login_required
+def recipe_create(request):
+    if request.method == 'POST':
+        form = RecipeForm(request.POST, request.FILES)  # Важно добавить request.FILES
+        if form.is_valid():
+            recipe = form.save(commit=False)
+            recipe.author = request.user
+            recipe.save()
+            form.save_m2m()
+            return redirect('recipe_detail', id=recipe.id)
+    else:
+        form = RecipeForm()
+    return render(request, 'recipes/recipe_form.html', {'form': form})
 
 def recipe_detail(request, id):
     recipe = get_object_or_404(Recipe, id=id)
     comments = recipe.comments.all()
 
-    # Обработка формы комментариев
-    if 'submit_comment' in request.POST:
-        comment_form = CommentForm(request.POST)
-        if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
-            comment.recipe = recipe
-            comment.author = request.user
-            comment.save()
-            return redirect('recipe_detail', id=recipe.id)
-    else:
-        comment_form = CommentForm()
+    # This will hold forms that might not be submitted yet.
+    comment_form = CommentForm(request.POST or None)
+    rating_form = RatingForm(request.POST or None)
 
-    # Обработка формы рейтинга
-    if 'rate_recipe' in request.POST:
-        rating_form = RatingForm(request.POST)
-        if rating_form.is_valid():
-            recipe.update_rating(int(rating_form.cleaned_data['rating']))
-            return redirect('recipe_detail', id=recipe.id)
-    else:
-        rating_form = RatingForm()
+    if request.method == 'POST':
+        if 'submit_comment' in request.POST:
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
+                comment.recipe = recipe
+                comment.author = request.user
+                comment.save()
+                return redirect('recipe_detail', id=recipe.id)
+            else:
+                # If the comment form is not valid, fall through to the render at the end of the view
+                pass
+        elif 'rate_recipe' in request.POST:
+            if rating_form.is_valid():
+                new_rating = int(rating_form.cleaned_data['rating'])
+                recipe.update_rating(new_rating)
+                return redirect('recipe_detail', id=recipe.id)
+            else:
+                # If the rating form is not valid, fall through to the render at the end of the view
+                pass
+        else:
+            # In case there are other POST actions that are not handled
+            return HttpResponse("Unhandled POST request.", status=400)
 
+    # If not a POST request or no form was submitted, show the details page
     return render(request, 'recipes/recipe_detail.html', {
         'recipe': recipe,
         'comments': comments,
@@ -76,19 +105,6 @@ def recipe_detail(request, id):
         'rating_form': rating_form
     })
 
-@login_required
-def recipe_create(request):
-    if request.method == 'POST':
-        form = RecipeForm(request.POST, request.FILES)
-        if form.is_valid():
-            recipe = form.save(commit=False)
-            recipe.author = request.user  # Автоматически устанавливаем автора рецепта
-            recipe.save()
-            form.save_m2m()
-            return redirect('recipe_detail', id=recipe.id)
-    else:
-        form = RecipeForm()
-    return render(request, 'recipes/recipe_form.html', {'form': form})
 
 @login_required
 def recipe_update(request, id):
@@ -140,3 +156,26 @@ def dislike_comment(request, comment_id):
     else:
         comment.dislikes.add(request.user)
     return redirect('recipe_detail', id=comment.recipe.id)
+
+@login_required
+def update_profile(request):
+    try:
+        profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=request.user)
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('user_profile')  # Убедитесь, что 'profile' существует в urls.py
+    else:
+        form = UserProfileForm(instance=profile)
+    return render(request, 'profiles/update_profile.html', {'form': form})
+
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+    instance.profile.save()

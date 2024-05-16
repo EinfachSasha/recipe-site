@@ -1,0 +1,100 @@
+/* General Body Styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4; /* Light grey background */
+    padding-top: 80px; /* Space for fixed navbar */
+}
+
+/* Header and Navbar Styles */
+header {
+    background: #fff; /* White background for the navbar */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* Enhanced shadow for better depth */
+    position: fixed;
+    width: 100%;
+    top: 0; /* Ensures the header is always at the top */
+    z-index: 1050; /* Above other content */
+    height: 70px; /* Fixed height to ensure consistent header size */
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: #555; /* Dark grey color for text */
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: #d63384; /* Pink color for hover state */
+}
+
+.navbar-brand img {
+    height: 50px; /* Standard height for logo */
+    width: auto; /* Width is auto to maintain aspect ratio */
+}
+
+/* Main Content Padding */
+main {
+    padding: 20px; /* Padding around the content */
+    max-width: 1200px; /* Max width to prevent overly wide layouts */
+    margin: auto; /* Center the main content */
+}
+
+/* Styling for Image Blocks in Grids */
+.image-block {
+    position: relative;
+    margin: 25px 0px 25px 0px; /* Space between rows */
+    overflow: hidden; /* Ensures no overflow from images */
+    border-radius: 8px; /* Smoothed corners for aesthetics */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
+
+.image-block img {
+    width: 100%; /* Full width of the column */
+    height: 250px; /* Fixed height for uniformity */
+    object-fit: cover; /* Ensures image covers the block appropriately */
+}
+
+/* Image caption styling */
+.image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    color: white;
+    padding: 10px 20px;
+    text-align: center; /* Center-align the caption text */
+    font-weight: bold;
+    text-transform: uppercase; /* Uppercase text for captions */
+}
+
+/* Responsive Grid Layout */
+@media (min-width: 992px) {
+    .col-lg-4 {
+        width: 33.3333%; /* Divides row into three columns */
+        padding: 15px; /* Padding for gutter space */
+    }
+}
+
+/* Smaller screens adjustments */
+@media (max-width: 991px) {
+    .col-lg-4 {
+        width: 50%; /* Two images per row on medium screens */
+        padding: 10px;
+    }
+}
+
+@media (max-width: 767px) {
+    .col-lg-4 {
+        width: 100%; /* Full width for small screens, one image per row */
+        padding: 5px;
+    }
+
+    body {
+        padding-top: 70px; /* Smaller padding for smaller headers */
+    }
+}
+
+/* Fixes for navbar overlap */
+.main-container {
+    padding-top: 70px; /* Adds padding to top of main content to avoid overlap */
+}

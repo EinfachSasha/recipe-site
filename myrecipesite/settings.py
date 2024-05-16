@@ -142,3 +142,6 @@ LOCALE_PATHS = [
 DJANGO_SETTINGS_MODULE: 'myrecipesite.settings'
 
 ALLOWED_HOSTS = ['*'] 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
